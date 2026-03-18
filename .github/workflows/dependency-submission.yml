@@ -8,6 +8,11 @@ on:
 permissions:
   contents: write
 
+env:
+  TERMUX_GRADLE_REMOTE_CACHE_URL: ${{ secrets.TERMUX_GRADLE_REMOTE_CACHE_URL }}
+  TERMUX_GRADLE_REMOTE_CACHE_USER: ${{ secrets.TERMUX_GRADLE_REMOTE_CACHE_USER }}
+  TERMUX_GRADLE_REMOTE_CACHE_TOKEN: ${{ secrets.TERMUX_GRADLE_REMOTE_CACHE_TOKEN }}
+
 jobs:
   dependency-submission:
     runs-on: ubuntu-latest

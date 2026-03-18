@@ -1,1 +1,37 @@
 include ':app', ':termux-shared', ':terminal-emulator', ':terminal-view'
+
+buildCache {
+    local {
+        enabled = false
+    }
+
+    remote(HttpBuildCache) {
+        // On CI it's easiest to provide Env Vars
+        // On local macOS it's easier to provide ~/.gradle/gradle.properties for consistency between Terminal & IDE
+        def remoteUrl = System.getenv('TERMUX_GRADLE_REMOTE_CACHE_URL') ?:
+                providers.gradleProperty('TERMUX_GRADLE_REMOTE_CACHE_URL').orNull
+
+        def user = System.getenv('TERMUX_GRADLE_REMOTE_CACHE_USER') ?:
+                providers.gradleProperty('TERMUX_GRADLE_REMOTE_CACHE_USER').orNull
+
+        def token = System.getenv('TERMUX_GRADLE_REMOTE_CACHE_TOKEN') ?:
+                providers.gradleProperty('TERMUX_GRADLE_REMOTE_CACHE_TOKEN').orNull
+
+        if (remoteUrl != null && user != null && token != null) {
+            logger.lifecycle("Remote cache enabled")
+            enabled = true
+
+            url = uri(remoteUrl.trim())
+
+            credentials {
+                username = user.trim()
+                password = token.trim()
+            }
+
+            push = true
+        } else {
+            logger.lifecycle("Remote cache disabled")
+            enabled = false
+        }
+    }
+}
